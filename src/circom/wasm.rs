@@ -3,7 +3,7 @@ use crate::{FileLocation, R1CS};
 use crate::circom::reader::{load_r1cs_from_bin, load_witness_from_bin_reader};
 use ff::PrimeField;
 use js_sys::Uint8Array;
-use nova_snark::traits::Group;
+use nova_snark::traits::Engine;
 use std::io::Cursor;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
@@ -42,10 +42,10 @@ pub async fn generate_witness_browser(input_json_string: &str, wasm_file: &str) 
 
 #[cfg(target_family = "wasm")]
 /// load r1cs file by filename with autodetect encoding (bin or json)
-pub async fn load_r1cs<G1, G2>(filename: &FileLocation) -> R1CS<<G1 as Group>::Scalar>
+pub async fn load_r1cs<G1, G2>(filename: &FileLocation) -> R1CS<<G1 as Engine>::Scalar>
 where
-    G1: Group<Base = <G2 as Group>::Scalar>,
-    G2: Group<Base = <G1 as Group>::Scalar>,
+    G1: Engine<Base = <G2 as Engine>::Scalar>,
+    G2: Engine<Base = <G1 as Engine>::Scalar>,
 {
     let filename = match filename {
         FileLocation::PathBuf(_) => panic!("unreachable"),

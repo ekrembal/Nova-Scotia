@@ -135,7 +135,7 @@ async fn compute_witness<E1, E2>(
     current_public_input: Vec<String>,
     private_input: HashMap<String, Value>,
     witness_generator_file: FileLocation,
-) -> Vec<<G1 as Group>::Scalar>
+) -> Vec<<E1 as Engine>::Scalar>
 where
     E1: Engine<Base = <E2 as Engine>::Scalar>,
     E2: Engine<Base = <E1 as Engine>::Scalar>,
@@ -266,7 +266,7 @@ where
 }
 
 #[cfg(target_family = "wasm")]
-pub fn create_recursive_circuit<E1, E2>(
+pub async fn create_recursive_circuit<E1, E2>(
     witness_generator_file: FileLocation,
     r1cs: R1CS<F<E1>>,
     private_inputs: Vec<HashMap<String, Value>>,
