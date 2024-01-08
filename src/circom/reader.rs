@@ -14,7 +14,7 @@ use crate::circom::circuit::{CircuitJson, R1CS};
 use crate::circom::file::{from_reader, read_field};
 use crate::FileLocation;
 use ff::PrimeField;
-use nova_snark::traits::Group;
+use nova_snark::traits::Engine;
 
 pub fn generate_witness_from_bin<Fr: PrimeField>(
     witness_bin: &Path,
@@ -170,10 +170,10 @@ pub(crate) fn load_witness_from_bin_reader<Fr: PrimeField, R: Read>(
 
 #[cfg(not(target_family = "wasm"))]
 /// load r1cs file by filename with autodetect encoding (bin or json)
-pub fn load_r1cs<G1, G2>(filename: &FileLocation) -> R1CS<<G1 as Group>::Scalar>
+pub fn load_r1cs<G1, G2>(filename: &FileLocation) -> R1CS<<G1 as Engine>::Scalar>
 where
-    G1: Group<Base = <G2 as Group>::Scalar>,
-    G2: Group<Base = <G1 as Group>::Scalar>,
+    G1: Engine<Base = <G2 as Engine>::Scalar>,
+    G2: Engine<Base = <G1 as Engine>::Scalar>,
 {
     let filename = match filename {
         FileLocation::PathBuf(filename) => filename,
@@ -232,10 +232,10 @@ fn load_r1cs_from_json<Fr: PrimeField, R: Read>(reader: R) -> R1CS<Fr> {
 }
 
 /// load r1cs from bin file by filename
-fn load_r1cs_from_bin_file<G1, G2>(filename: &Path) -> R1CS<<G1 as Group>::Scalar>
+fn load_r1cs_from_bin_file<G1, G2>(filename: &Path) -> R1CS<<G1 as Engine>::Scalar>
 where
-    G1: Group<Base = <G2 as Group>::Scalar>,
-    G2: Group<Base = <G1 as Group>::Scalar>,
+    G1: Engine<Base = <G2 as Engine>::Scalar>,
+    G2: Engine<Base = <G1 as Engine>::Scalar>,
 {
     let reader = OpenOptions::new()
         .read(true)
@@ -245,10 +245,10 @@ where
 }
 
 /// load r1cs from bin by a reader
-pub(crate) fn load_r1cs_from_bin<R: Read + Seek, G1, G2>(reader: R) -> R1CS<<G1 as Group>::Scalar>
+pub(crate) fn load_r1cs_from_bin<R: Read + Seek, G1, G2>(reader: R) -> R1CS<<G1 as Engine>::Scalar>
 where
-    G1: Group<Base = <G2 as Group>::Scalar>,
-    G2: Group<Base = <G1 as Group>::Scalar>,
+    G1: Engine<Base = <G2 as Engine>::Scalar>,
+    G2: Engine<Base = <G1 as Engine>::Scalar>,
 {
     let file = from_reader::<_, G1, G2>(reader).expect("unable to read.");
     let num_inputs = (1 + file.header.n_pub_in + file.header.n_pub_out) as usize;
